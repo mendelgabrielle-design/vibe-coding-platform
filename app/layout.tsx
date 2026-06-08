@@ -1,53 +1,33 @@
-import { NuqsAdapter } from 'nuqs/adapters/next/app'
-import { ChatProvider } from '@/lib/chat-context'
-import { CommandLogsStream } from '@/components/commands-logs/commands-logs-stream'
-import { ErrorMonitor } from '@/components/error-monitor/error-monitor'
-import { SandboxState } from '@/components/modals/sandbox-state'
-import { Toaster } from '@/components/ui/sonner'
-import type { ReactNode } from 'react'
 import type { Metadata } from 'next'
-import { Suspense } from 'react'
+import { Inter } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
-const title = 'OSS Vibe Coding Platform'
-const description = `This is a demo of an end-to-end coding platform where the user can enter text prompts, and the agent will create a full stack application. It uses Vercel's AI Cloud services like Sandbox for secure code execution, AI Gateway for GPT-5 and other models support, Fluid Compute for efficient rendering and streaming, and it's built with Next.js and the AI SDK.`
+const inter = Inter({ 
+  subsets: ["latin"],
+  variable: '--font-inter'
+})
 
 export const metadata: Metadata = {
-  title,
-  description,
-  openGraph: {
-    images: [
-      {
-        url: 'https://assets.vercel.com/image/upload/v1754588799/OSSvibecodingplatform/OG.png',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    images: [
-      {
-        url: 'https://assets.vercel.com/image/upload/v1754588799/OSSvibecodingplatform/OG.png',
-      },
-    ],
+  title: 'LUMINA - A luz que guia a essência',
+  description: 'Consultas espirituais, leitura de cartas e trabalhos espirituais com Patrícia Porciuncula. Atendimento online com discrição e sensibilidade.',
+  keywords: 'consulta espiritual, leitura de cartas, baralho cigano, umbanda, maria padilha, trabalhos espirituais',
+  icons: {
+    icon: '/images/logo-lumina.jpg',
+    apple: '/images/logo-lumina.jpg',
   },
 }
 
 export default function RootLayout({
   children,
-}: Readonly<{ children: ReactNode }>) {
+}: Readonly<{
+  children: React.ReactNode
+}>) {
   return (
-    <html lang="en">
-      <body className="antialiased">
-        <Suspense fallback={null}>
-          <NuqsAdapter>
-            <ChatProvider>
-              <ErrorMonitor>{children}</ErrorMonitor>
-            </ChatProvider>
-          </NuqsAdapter>
-        </Suspense>
-        <Toaster />
-        <CommandLogsStream />
-        <SandboxState />
+    <html lang="pt-BR" className="bg-background">
+      <body className={`${inter.variable} font-sans antialiased`}>
+        {children}
+        {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
   )
