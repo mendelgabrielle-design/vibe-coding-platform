@@ -1,64 +1,54 @@
-import { Chat } from './chat'
-import { FileExplorer } from './file-explorer'
-import { Header } from './header'
-import { Horizontal, Vertical } from '@/components/layout/panels'
-import { Logs } from './logs'
-import { Preview } from './preview'
-import { TabContent, TabItem } from '@/components/tabs'
-import { Welcome } from '@/components/modals/welcome'
-import { cookies } from 'next/headers'
-import { getHorizontal, getVertical } from '@/components/layout/sizing'
-import { hideBanner } from '@/app/actions'
+import { TopBar } from '@/components/top-bar'
+import { SiteHeader } from '@/components/site-header'
+import { Hero } from '@/components/hero'
+import { BenefitsBar } from '@/components/benefits-bar'
+import { CategoryShowcase } from '@/components/category-showcase'
+import { ProductSection } from '@/components/product-section'
+import { AboutSection } from '@/components/about-section'
+import { SiteFooter } from '@/components/site-footer'
+import { CartDrawer } from '@/components/cart-drawer'
+import { SupportBot } from '@/components/support-bot'
+import { products } from '@/lib/products'
 
-export default async function Page() {
-  const store = await cookies()
-  const banner = store.get('banner-hidden')?.value !== 'true'
-  const horizontalSizes = getHorizontal(store)
-  const verticalSizes = getVertical(store)
+export default function HomePage() {
+  const bestSellers = products.filter(
+    (p) => p.tag === 'Mais vendido' || p.tag === 'Promoção relâmpago' || p.oldPrice,
+  )
+  const cosmeticos = products.filter((p) => p.department === 'cosmeticos')
+  const bazar = products.filter((p) => p.department === 'bazar')
+
   return (
-    <>
-      <Welcome defaultOpen={banner} onDismissAction={hideBanner} />
-      <div className="flex flex-col h-screen max-h-screen overflow-hidden p-2 space-x-2">
-        <Header className="flex items-center w-full" />
-        <ul className="flex space-x-5 font-mono text-sm tracking-tight px-1 py-2 md:hidden">
-          <TabItem tabId="chat">Chat</TabItem>
-          <TabItem tabId="preview">Preview</TabItem>
-          <TabItem tabId="file-explorer">File Explorer</TabItem>
-          <TabItem tabId="logs">Logs</TabItem>
-        </ul>
+    <div className="min-h-screen bg-background">
+      <TopBar />
+      <SiteHeader />
+      <main>
+        <Hero />
+        <BenefitsBar />
+        <CategoryShowcase />
 
-        {/* Mobile layout tabs taking the whole space*/}
-        <div className="flex flex-1 w-full overflow-hidden pt-2 md:hidden">
-          <TabContent tabId="chat" className="flex-1">
-            <Chat className="flex-1 overflow-hidden" />
-          </TabContent>
-          <TabContent tabId="preview" className="flex-1">
-            <Preview className="flex-1 overflow-hidden" />
-          </TabContent>
-          <TabContent tabId="file-explorer" className="flex-1">
-            <FileExplorer className="flex-1 overflow-hidden" />
-          </TabContent>
-          <TabContent tabId="logs" className="flex-1">
-            <Logs className="flex-1 overflow-hidden" />
-          </TabContent>
-        </div>
+        <ProductSection
+          title="Mais vendidos e ofertas"
+          subtitle="Os favoritos da Ella com preços especiais"
+          products={bestSellers}
+        />
+        <ProductSection
+          id="cosmeticos"
+          title="Cosméticos"
+          subtitle="Perfumes e fragrâncias importadas exclusivas"
+          products={cosmeticos}
+        />
+        <ProductSection
+          id="bazar"
+          title="Bazar"
+          subtitle="Chás solúveis importados Ekland"
+          products={bazar}
+        />
 
-        {/* Desktop layout with horizontal and vertical panels */}
-        <div className="hidden flex-1 w-full min-h-0 overflow-hidden pt-2 md:flex">
-          <Horizontal
-            defaultLayout={horizontalSizes ?? [50, 50]}
-            left={<Chat className="flex-1 overflow-hidden" />}
-            right={
-              <Vertical
-                defaultLayout={verticalSizes ?? [33.33, 33.33, 33.33]}
-                top={<Preview className="flex-1 overflow-hidden" />}
-                middle={<FileExplorer className="flex-1 overflow-hidden" />}
-                bottom={<Logs className="flex-1 overflow-hidden" />}
-              />
-            }
-          />
-        </div>
-      </div>
-    </>
+        <AboutSection />
+      </main>
+      <SiteFooter />
+      <CartDrawer />
+      <SupportBot />
+    </div>
   )
 }
